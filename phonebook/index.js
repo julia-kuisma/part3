@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
+
 let persons = [
     { 
       "id": "1",
@@ -39,6 +42,15 @@ app.get('/api/persons/:id', (request, response) => {
     response.json(searchedPerson);
 })
 
+app.post('/api/persons', (request, response) => {
+	console.log(request.body);
+    const id = Math.floor(Math.random() * 999999);
+	const newPerson = {"id": id, ...request.body}
+    persons.push(newPerson)
+
+    response.status(201).send("Created")
+})
+
 app.delete('/api/persons/:id', (request, response) => {
     const id = request.params.id
     persons = persons.filter(person => person.id !== id)
@@ -48,5 +60,5 @@ app.delete('/api/persons/:id', (request, response) => {
 
 const PORT = 3001
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+ 	console.log(`Server running on port ${PORT}`)
 })
