@@ -43,12 +43,22 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-	console.log(request.body);
     const id = Math.floor(Math.random() * 999999);
 	const newPerson = {"id": id, ...request.body}
-    persons.push(newPerson)
-
-    response.status(201).send("Created")
+	const exists = persons.some(person => person.name === newPerson.name);
+	console.log(newPerson)
+	console.log(exists);
+	if (newPerson.name == "" || newPerson.number == "") {
+		response.status(400).send("Data missing")
+	} else {
+		if (exists) {
+			response.status(409).send("Name must be unique")
+		} else {
+			persons.push(newPerson)
+			response.status(201).send("Created")
+		}
+	}
+    
 })
 
 app.delete('/api/persons/:id', (request, response) => {
